@@ -55,10 +55,12 @@ impl Task {
             let mut counts = HashMap::new();
             let mut assets = vec![];
 
+            // Just loop on every nodes, we don't care about the hierarchy
             for n in dom.nodes_mut() {
                 if let Some(t) = n.as_tag_mut() {
                     let tag = t.name().as_utf8_str().as_ref().to_owned();
                     *counts.entry(tag.clone()).or_insert(0) += 1;
+                    // only img tags get rewritten as time is limited, should add other tags (script, link, etc)
                     if rewrite_assets && tag == "img" {
                         self.rewrite_image(t, &mut assets)?;
                     }
@@ -74,7 +76,7 @@ impl Task {
             let body = if rewrite_assets {
                 dom.inner_html()
             } else {
-                drop(dom);
+                drop(dom); // has to drop here as it 'borrows' the body
                 body
             };
             Ok((body.into(), assets))
@@ -126,19 +128,19 @@ async fn main() {
             Arg::new("show_metadata")
                 .short('m')
                 .long("metadata")
-                .help("show metadata"),
+                .help("show metadata (section 2)"),
         )
         .arg(
             Arg::new("rewrite_assets")
                 .short('r')
                 .long("rewrite")
-                .help("rewrite assets"),
+                .help("download and rewrite assets (section 3)"),
         )
         .arg(
             Arg::new("verbose")
                 .short('v')
                 .long("verbose")
-                .help("verbose output")
+                .help("add more verbosity")
                 .max_occurrences(3),
         )
         .arg(Arg::new("urls").multiple_values(true))
