@@ -5,6 +5,5 @@ RUN cd /src && cargo build --release
 
 #package
 FROM busybox
-COPY --from=0 "./target/release/rget" /bin/rget
+COPY --from=0 "/src/target/release/rget" /bin/rget
 ENTRYPOINT ["/bin/rget"]
-`
