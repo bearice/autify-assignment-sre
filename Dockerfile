@@ -1,7 +1,7 @@
 #build
 FROM rust:alpine
 COPY . /src
-RUN apk add openssl-dev musl-dev
+RUN apk add musl-dev
 RUN cd /src && cargo build --release
 
 #package
