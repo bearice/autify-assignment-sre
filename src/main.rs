@@ -155,14 +155,18 @@ async fn main() {
         2 => Level::DEBUG,
         _ => Level::TRACE,
     };
-    println!("Verbosity: {}", verbose);
     tracing_subscriber::fmt::fmt()
         .with_max_level(verbose)
         .init();
 
+    let urls: Vec<_> = args.values_of("urls").unwrap_or_default().collect();
+    if urls.is_empty() {
+        eprintln!("No urls provided");
+        return;
+    }
     let mut tasks = vec![];
-    for arg in args.values_of("urls").unwrap() {
-        tasks.push(Task::new(Url::parse(arg).expect("invalid url")));
+    for url in urls {
+        tasks.push(Task::new(Url::parse(url).expect("invalid url")));
     }
     let mut futures = FuturesUnordered::new();
     for task in tasks {
