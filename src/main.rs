@@ -88,7 +88,10 @@ impl Task {
         let attrs = t.attributes_mut();
         if let Some(t) = attrs.get_mut("src").flatten() {
             let base_url = Url::options().base_url(Some(&self.url));
-            let src = t.as_utf8_str().as_ref().to_owned();
+            let src = t.as_utf8_str();
+            if src.starts_with("data:") {
+                return Ok(());
+            }
             let url = base_url.parse(&src).unwrap();
             let dst = filename_for_url(&url);
             info!("rewriting asset: {} => {}", src, dst);
