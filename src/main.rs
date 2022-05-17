@@ -108,7 +108,7 @@ impl Task {
                 resp.status()
             ));
         }
-        let (body, assets) = if show_metadata {
+        let (body, assets) = if show_metadata || rewrite_assets {
             self.filter_html(resp, rewrite_assets).await?
         } else {
             (self.filter_noop(resp).await?, vec![])
