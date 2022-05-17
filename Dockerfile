@@ -1,9 +1,10 @@
 #build
-FROM rust:1.57
+FROM rust:alpine
 COPY . /src
+RUN apk add openssl-dev musl-dev
 RUN cd /src && cargo build --release
 
 #package
-FROM busybox
+FROM alpine
 COPY --from=0 "/src/target/release/rget" /bin/rget
 ENTRYPOINT ["/bin/rget"]
